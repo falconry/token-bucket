@@ -1,5 +1,5 @@
-Fast Token Bucket Implementation for Python
-===========================================
+Fast Token Bucket Implementation for Python |Build Status| |codecov.io|
+=======================================================================
 
 The ``token-bucket`` package provides an optimized implementation of the
 `token bucket algorithm <http://falconframework.org/index.html>`_ that
@@ -18,3 +18,8 @@ Moving window algorithms are resitant to bursting, but at the cost of
 additional processing and memory overhead vs. the token bucket
 algorithm which uses a simple, fast counter per key. The latter approach
 does allow for bursting, but only for a controlled duration.
+
+.. |Build Status| image:: https://travis-ci.org/falconry/token-bucket.svg
+   :target: https://travis-ci.org/falconry/token-bucket
+.. |codecov.io| image:: https://codecov.io/gh/falconry/token-bucket/branch/master/graph/badge.svg
+   :target: https://codecov.io/gh/falconry/token-bucket
