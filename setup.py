@@ -14,7 +14,7 @@ setup(
     description='Very fast implementation of the token bucket algorithm.',
     long_description=io.open('README.rst', 'r', encoding='utf-8').read(),
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 3 - Alpha',
         'Environment :: Web Environment',
         'Natural Language :: English',
         'Intended Audience :: Developers',
