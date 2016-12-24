@@ -1,9 +1,11 @@
-Fast Token Bucket Implementation for Python |Build Status| |codecov.io|
-=======================================================================
+A Token Bucket Implementation for Python Web Apps |Build Status| |codecov.io|
+=============================================================================
 
-The ``token-bucket`` package provides an optimized implementation of the
-`token bucket algorithm <http://falconframework.org/index.html>`_ that
-does not require the use of a timer to manage the bucket state.
+The ``token-bucket`` package provides an implementation of the
+`token bucket algorithm <http://falconframework.org/index.html>`_
+suitable for use in web applications for shaping or policing request
+rates. This implementation does not require the use of an independent
+timer thread to manage the bucket state.
 
 Compared to other rate-limiting algorithms that use a simple counter,
 the token bucket algorithm provides the following advantages:
