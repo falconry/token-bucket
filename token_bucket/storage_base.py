@@ -45,7 +45,7 @@ class StorageBase(object):
 
         Args:
             key (str): Name of the bucket to replenish.
-            rate (int): Number of tokens per second to add to the
+            rate (float): Number of tokens per second to add to the
                 bucket. Over time, the number of tokens that can be
                 consumed is limited by this rate.
             capacity (int): Maximum number of tokens that the bucket

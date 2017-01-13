@@ -24,7 +24,7 @@ class Limiter(object):
     of multiple consumers of a resource.
 
     Args:
-        rate (int): Number of tokens per second to add to the
+        rate (float): Number of tokens per second to add to the
             bucket. Over time, the number of tokens that can be
             consumed is limited by this rate. Each token represents
             some percentage of a finite resource that may be
@@ -35,7 +35,8 @@ class Limiter(object):
 
             The bucket capacity has a direct impact on burst duration.
             Let M be the maximum possible token request rate, r the
-            token replenishment rate, and b the bucket capacity.
+            token generation rate (tokens/sec), and b the bucket
+            capacity.
 
             If r < M the maximum burst duration, in seconds, is:
 
@@ -65,8 +66,8 @@ class Limiter(object):
     )
 
     def __init__(self, rate, capacity, storage):
-        if not isinstance(rate, int):
-            raise TypeError('rate must be an int')
+        if not isinstance(rate, (float, int)):
+            raise TypeError('rate must be an int or float')
 
         if rate < 1:
             raise ValueError('rate must be >= 1')

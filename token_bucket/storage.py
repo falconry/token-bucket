@@ -114,7 +114,7 @@ class MemoryStorage(StorageBase):
                     #   of tokens in the bucket plus the number of
                     #   tokens generated since last time. Fractional
                     #   tokens are permitted in order to improve
-                    #   accuracy (now is a float).
+                    #   accuracy (now is a float, and rate may be also).
                     tokens_in_bucket + (rate * (now - last_replenished_at))
                 ),
 
