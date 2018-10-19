@@ -145,7 +145,9 @@ class StorageBase(AbstractStorage):
             #          possibility in light of the points above.
 
             tokens_in_bucket, last_replenished_at = self._buckets[key]
-
+        except KeyError:
+            self._buckets[key] = (capacity, time.time())
+        else:
             now = time.time()
 
             # NOTE(kgriffs): This will detect many, but not all,
@@ -171,9 +173,6 @@ class StorageBase(AbstractStorage):
                 # Update the timestamp for use next time
                 now
             )
-
-        except KeyError:
-            self._buckets[key] = (capacity, time.time())
 
     def consume(self, key, num_tokens):
         """Attempt to take one or more tokens from a bucket.
