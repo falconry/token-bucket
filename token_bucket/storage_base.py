@@ -155,7 +155,7 @@ class StorageBase(AbstractStorage):
             if now < last_replenished_at:  # pragma: no cover
                 return
 
-            self._buckets[key] = [
+            self._buckets[key] = (
                 # Limit to capacity
                 min(
                     capacity,
@@ -170,10 +170,10 @@ class StorageBase(AbstractStorage):
 
                 # Update the timestamp for use next time
                 now
-            ]
+            )
 
         except KeyError:
-            self._buckets[key] = [capacity, time.time()]
+            self._buckets[key] = (capacity, time.time())
 
     def consume(self, key, num_tokens):
         """Attempt to take one or more tokens from a bucket.
@@ -184,7 +184,7 @@ class StorageBase(AbstractStorage):
 
         # NOTE(kgriffs): Assume that the key will be present, since
         #   replenish() will always be called before consume().
-        tokens_in_bucket = self._buckets[key][0]
+        tokens_in_bucket, timestamp = self._buckets[key]
         if tokens_in_bucket < num_tokens:
             return False
 
@@ -225,5 +225,5 @@ class StorageBase(AbstractStorage):
         #          time window, but we might as well remove the
         #          possibility given the points above.
 
-        self._buckets[key][0] -= num_tokens
+        self._buckets[key] = (tokens_in_bucket - num_tokens, timestamp)
         return True
