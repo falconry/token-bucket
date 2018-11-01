@@ -69,8 +69,8 @@ class Limiter(object):
         if not isinstance(rate, (float, int)):
             raise TypeError('rate must be an int or float')
 
-        if rate < 1:
-            raise ValueError('rate must be >= 1')
+        if rate <= 0:
+            raise ValueError('rate must be > 0')
 
         if not isinstance(capacity, int):
             raise TypeError('capacity must be an int')
