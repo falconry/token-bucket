@@ -1,0 +1,71 @@
+name: tests
+
+on:
+  # Trigger the tests workflow on push or pull requests.
+  push:
+    branches:
+      - "*"
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  run_tox:
+    name: tox -e ${{ matrix.toxenv }} (${{matrix.python-version}} on ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version:
+          - "3.8"
+        os:
+          - "ubuntu-20.04"
+        toxenv:
+          - "flake8"
+          - "py38"
+        include:
+          - python-version: 3.5
+            os: ubuntu-20.04
+            toxenv: py35
+          - python-version: 3.6
+            os: ubuntu-20.04
+            toxenv: py36
+          - python-version: 3.7
+            os: ubuntu-20.04
+            toxenv: py37
+          - python-version: 3.9
+            os: ubuntu-20.04
+            toxenv: py39
+          - python-version: pypy3
+            os: ubuntu-20.04
+            toxenv: pypy3
+
+    # Steps to run in each job.
+    # Some are GitHub actions, others run shell commands.
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install coverage tox
+          python --version
+          pip --version
+          tox --version
+          coverage --version
+
+      - name: Run tests
+        run: tox -e ${{ matrix.toxenv }}
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        if: ${{ matrix.toxenv == 'py38' }}
+        with:
+          env_vars: PYTHON
+          fail_ci_if_error: true
