@@ -4,7 +4,7 @@ A Token Bucket Implementation for Python Web Apps
 =================================================
 
 The ``token-bucket`` package provides an implementation of the
-`token bucket algorithm <http://falconframework.org/index.html>`_
+`token bucket algorithm <https://en.wikipedia.org/wiki/Token_bucket>`_
 suitable for use in web applications for shaping or policing request
 rates. This implementation does not require the use of an independent
 timer thread to manage the bucket state.
