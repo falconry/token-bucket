@@ -16,7 +16,7 @@ the token bucket algorithm provides the following advantages:
   replenished gradually, rather than being immediately refilled at the
   beginning of each epoch as is common with simple fixed window
   counters.
-* Burst duration can be explicitly controlled
+* Burst duration can be explicitly controlled.
 
 Moving window algorithms are resistant to bursting, but at the cost of
 additional processing and memory overhead vs. the token bucket
