@@ -36,6 +36,7 @@ setup(
     ],
     keywords='web http https cloud rate limiting token bucket throttling',
     author='kgriffs',
+    author_email='mail@kgriffs.com',
     url='https://github.com/falconry/token-bucket',
     license='Apache 2.0',
     packages=find_packages(exclude=['tests']),
