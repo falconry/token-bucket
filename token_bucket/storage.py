@@ -96,7 +96,7 @@ class MemoryStorage(StorageBase):
 
             tokens_in_bucket, last_replenished_at = self._buckets[key]
 
-            now = time.time()
+            now = time.monotonic()
 
             # NOTE(kgriffs): This will detect many, but not all,
             #   manifestations of the race condition. If a later
@@ -123,7 +123,7 @@ class MemoryStorage(StorageBase):
             ]
 
         except KeyError:
-            self._buckets[key] = [capacity, time.time()]
+            self._buckets[key] = [capacity, time.monotonic()]
 
     def consume(self, key, num_tokens):
         """Attempt to take one or more tokens from a bucket.

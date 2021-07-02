@@ -8,6 +8,7 @@ import token_bucket
 
 
 @pytest.mark.parametrize('rate,capacity', [
+    (0.3, 1),
     (1, 1),
     (2.5, 1),  # Fractional rates are valid
     (10, 100),  # Long recovery time after bursting
