@@ -53,7 +53,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Set up Python 3.8
+      - name: Set up Python 3.8 env
         if: ${{ matrix.toxenv == 'py35' }}
         run: |
           sudo apt-get update
@@ -71,7 +71,9 @@ jobs:
           coverage --version
 
       - name: Run tests
-        run: tox -e ${{ matrix.toxenv }}
+        run: |
+          if [ -f py38-env/bin/activate ]; then source py38-env/bin/activate; fi
+          tox -e ${{ matrix.toxenv }}
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
