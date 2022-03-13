@@ -14,7 +14,7 @@ setup(
     description='Very fast implementation of the token bucket algorithm.',
     long_description=io.open('README.rst', 'r', encoding='utf-8').read(),
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
         'Natural Language :: English',
         'Intended Audience :: Developers',
@@ -33,6 +33,7 @@ setup(
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
     ],
     keywords='web http https cloud rate limiting token bucket throttling',
     author='kgriffs',
