@@ -24,16 +24,22 @@ jobs:
           - "pep8"
         include:
           - python-version: 3.5
+            os: ubuntu-20.04
             toxenv: py35
           - python-version: 3.6
+            os: ubuntu-20.04
             toxenv: py36
           - python-version: 3.7
+            os: ubuntu-20.04
             toxenv: py37
           - python-version: 3.8
+            os: ubuntu-20.04
             toxenv: py38
           - python-version: 3.9
+            os: ubuntu-20.04
             toxenv: py39
           - python-version: pypy3
+            os: ubuntu-20.04
             toxenv: pypy3
 
     # Steps to run in each job.
