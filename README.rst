@@ -31,3 +31,30 @@ does allow for bursting, but only for a controlled duration.
 
 .. |codecov.io| image:: https://codecov.io/gh/falconry/token-bucket/branch/master/graph/badge.svg
    :target: https://codecov.io/gh/falconry/token-bucket
+
+Usage
+=====
+
+.. code-block:: python
+
+  from token_bucket import MemoryStorage, Limiter
+
+  storage = MemoryStorage()
+  limiter = Limiter(rate=1, capacity=1, storage=storage) # limiter with a rate of 1 token/sec
+  i = 0
+
+  while i != 3:
+      if limiter.consume('test'):
+          print(f'success {i}!')
+          i += 1
+      else:
+          print(f'sleeping for 1s...')
+          time.sleep(1)
+
+Output:
+::
+  success 0!
+  sleeping for 1s...
+  success 1!
+  sleeping for 1s...
+  success 2!
