@@ -1,0 +1,66 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "token-bucket"
+dynamic = ["version"]
+description = "Very fast implementation of the token bucket algorithm."
+readme = "README.rst"
+license = "Apache-2.0"
+requires-python = ">=3.7"
+authors = [{ name = "kgriffs", email = "mail@kgriffs.com" }]
+keywords = [
+    "bucket",
+    "cloud",
+    "http",
+    "https",
+    "limiting",
+    "rate",
+    "throttling",
+    "token",
+    "web",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Web Environment",
+    "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: Apache Software License",
+    "Natural Language :: English",
+    "Operating System :: MacOS :: MacOS X",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+    "Topic :: Internet :: WWW/HTTP",
+    "Topic :: Software Development :: Libraries",
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/falconry/token-bucket"
+
+[tool.hatch.version]
+path = "token_bucket/version.py"
+
+[tool.hatch.build.targets.sdist]
+include = ["/token_bucket"]
+
+[tool.coverage.run]
+branch = true
+source = ["token_bucket"]
+parallel = true
+
+[tool.coverage.report]
+show_missing = true
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__ == .__main__.:",
+    "@(abc\\.)?abstractmethod",
+]
