@@ -11,39 +11,25 @@ on:
 
 jobs:
   run_tox:
-    name: tox -e ${{ matrix.toxenv }} (${{matrix.python-version}} on ${{ matrix.os }})
+    name: tox -e ${{ matrix.toxenv }} (${{ matrix.python-version }} on ${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        python-version:
-          - "3.8"
-        os:
-          - "ubuntu-20.04"
-        toxenv:
-          - "pep8"
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11", "pypy3.9"]
+        os: ["ubuntu-22.04"]
+        toxenv: ["py"]
         include:
-          - python-version: "3.5"
-            os: ubuntu-20.04
-            toxenv: py35
-          - python-version: "3.6"
-            os: ubuntu-20.04
-            toxenv: py36
-          - python-version: "3.7"
-            os: ubuntu-20.04
-            toxenv: py37
-          - python-version: "3.8"
-            os: ubuntu-20.04
-            toxenv: py38
-          - python-version: "3.9"
-            os: ubuntu-20.04
-            toxenv: py39
           - python-version: "3.10"
-            os: ubuntu-20.04
-            toxenv: py310
-          - python-version: pypy3
-            os: ubuntu-20.04
-            toxenv: pypy3
+            os: "ubuntu-22.04"
+            toxenv: "py"
+            upload_coverage: true
+          - python-version: "3.10"
+            os: "ubuntu-22.04"
+            toxenv: "pep8"
+    env:
+      OS: ${{ matrix.os }}
+      PYTHON: ${{ matrix.python-version }}
 
     # Steps to run in each job.
     # Some are GitHub actions, others run shell commands.
@@ -52,35 +38,27 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Set up Python 3.8 env
-        if: ${{ matrix.toxenv == 'py35' }}
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential python3.8 python3.8-dev python3.8-venv
-          python3.8 -m venv py38-env
-
       - name: Install dependencies
         run: |
-          if [ -f py38-env/bin/activate ]; then source py38-env/bin/activate; fi
-          python -m pip install --upgrade pip
-          pip install coverage tox
+          pip install tox
           python --version
           pip --version
           tox --version
-          coverage --version
 
       - name: Run tests
         run: |
-          if [ -f py38-env/bin/activate ]; then source py38-env/bin/activate; fi
-          tox -e ${{ matrix.toxenv }}
+          tox run -e ${{ matrix.toxenv }}
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v1
-        if: ${{ matrix.toxenv == 'py38' }}
+        uses: codecov/codecov-action@v3
+        if: matrix.upload_coverage
         with:
-          env_vars: PYTHON
+          env_vars: OS,PYTHON
+          files: ./coverage.xml
+          flags: unittests
+          name: codecov-umbrella
           fail_ci_if_error: true
