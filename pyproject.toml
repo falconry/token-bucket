@@ -47,14 +47,14 @@ dependencies = []
 Homepage = "https://github.com/falconry/token-bucket"
 
 [tool.hatch.version]
-path = "token_bucket/version.py"
+path = "src/token_bucket/version.py"
 
-[tool.hatch.build.targets.sdist]
-include = ["/token_bucket"]
+[tool.hatch.build]
+source = ["src"]
 
 [tool.coverage.run]
 branch = true
-source = ["token_bucket"]
+source = ["src"]
 parallel = true
 
 [tool.coverage.report]
