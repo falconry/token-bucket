@@ -5,7 +5,7 @@
 #   not use this "front-door" module, but rather import using the
 #   fully-qualified paths.
 
-from .version import __version__  # NOQA
+from .limiter import Limiter  # NOQA
 from .storage import MemoryStorage  # NOQA
 from .storage_base import StorageBase  # NOQA
-from .limiter import Limiter  # NOQA
+from .version import __version__  # NOQA

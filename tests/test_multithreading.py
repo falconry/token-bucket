@@ -20,20 +20,23 @@ def _run_threaded(func, num_threads):
 
 # NOTE(kgriffs): Don't try to remove more tokens than could ever
 #   be available according to the bucket capacity.
-@pytest.mark.parametrize('rate,capacity,max_tokens_to_consume', [
-    (10, 1, 1),
-    (100, 1, 1),
-    (100, 2, 2),
-    (10, 10, 1),
-    (10, 10, 2),
-    (100, 10, 1),
-    (100, 10, 10),
-    (100, 100, 5),
-    (100, 100, 10),
-    (1000, 10, 1),
-    (1000, 10, 5),
-    (1000, 10, 10),
-])
+@pytest.mark.parametrize(
+    "rate,capacity,max_tokens_to_consume",
+    [
+        (10, 1, 1),
+        (100, 1, 1),
+        (100, 2, 2),
+        (10, 10, 1),
+        (10, 10, 2),
+        (100, 10, 1),
+        (100, 10, 10),
+        (100, 100, 5),
+        (100, 100, 10),
+        (1000, 10, 1),
+        (1000, 10, 5),
+        (1000, 10, 10),
+    ],
+)
 def test_negative_count(rate, capacity, max_tokens_to_consume):
     # NOTE(kgriffs): Usually there will be a much larger number of
     #   keys in a production system, but keep to just five to increase
@@ -101,7 +104,7 @@ def test_replenishment():
 def test_conforming_ratio():
     rate = 100
     capacity = 10
-    key = 'key'
+    key = "key"
     target_ratio = 0.5
     ratio_max = 0.62
     num_threads = 4

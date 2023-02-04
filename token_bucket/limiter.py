@@ -60,26 +60,26 @@ class Limiter(object):
     """
 
     __slots__ = (
-        '_rate',
-        '_capacity',
-        '_storage',
+        "_rate",
+        "_capacity",
+        "_storage",
     )
 
     def __init__(self, rate, capacity, storage):
         if not isinstance(rate, (float, int)):
-            raise TypeError('rate must be an int or float')
+            raise TypeError("rate must be an int or float")
 
         if rate <= 0:
-            raise ValueError('rate must be > 0')
+            raise ValueError("rate must be > 0")
 
         if not isinstance(capacity, int):
-            raise TypeError('capacity must be an int')
+            raise TypeError("capacity must be an int")
 
         if capacity < 1:
-            raise ValueError('capacity must be >= 1')
+            raise ValueError("capacity must be >= 1")
 
         if not isinstance(storage, StorageBase):
-            raise TypeError('storage must be a subclass of StorageBase')
+            raise TypeError("storage must be a subclass of StorageBase")
 
         self._rate = rate
         self._capacity = capacity
@@ -115,15 +115,15 @@ class Limiter(object):
 
         if not key:
             if key is None:
-                raise TypeError('key may not be None')
+                raise TypeError("key may not be None")
 
-            raise ValueError('key must not be a non-empty string or bytestring')
+            raise ValueError("key must not be a non-empty string or bytestring")
 
         if num_tokens is None:
-            raise TypeError('num_tokens may not be None')
+            raise TypeError("num_tokens may not be None")
 
         if num_tokens < 1:
-            raise ValueError('num_tokens must be >= 1')
+            raise ValueError("num_tokens must be >= 1")
 
         self._storage.replenish(key, self._rate, self._capacity)
         return self._storage.consume(key, num_tokens)

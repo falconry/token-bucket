@@ -6,7 +6,7 @@ def test_version():
 
     assert isinstance(version, str)
 
-    numbers = version.split('.')
+    numbers = version.split(".")
     assert len(numbers) == 3
     for n in numbers:
         # NOTE(kgriffs): Just check that these are ints by virtue
