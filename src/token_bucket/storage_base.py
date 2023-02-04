@@ -13,28 +13,29 @@
 # limitations under the License.
 
 import abc
+from typing import Union
+
+KeyType = Union[str, bytes]
 
 
-class StorageBase(object):
-    __metaclass__ = abc.ABCMeta
-
+class StorageBase(abc.ABC):
     @abc.abstractmethod
-    def get_token_count(self, key):
+    def get_token_count(self, key: KeyType) -> float:
         """Query the current token count for the given bucket.
 
         Note that the bucket is not replenished first, so the count
         will be what it was the last time replenish() was called.
 
         Args:
-            key (str): Name of the bucket to query.
+            key: Name of the bucket to query.
 
         Returns:
-            float: Number of tokens currently in the bucket (may be
+            Number of tokens currently in the bucket (may be
             fractional).
         """
 
     @abc.abstractmethod
-    def replenish(self, key, rate, capacity):
+    def replenish(self, key: KeyType, rate: float, capacity: int) -> None:
         """Add tokens to a bucket per the given rate.
 
         Conceptually, tokens are added to the bucket at a rate of one
@@ -44,28 +45,28 @@ class StorageBase(object):
         bucket was replenished.
 
         Args:
-            key (str): Name of the bucket to replenish.
-            rate (float): Number of tokens per second to add to the
+            key: Name of the bucket to replenish.
+            rate: Number of tokens per second to add to the
                 bucket. Over time, the number of tokens that can be
                 consumed is limited by this rate.
-            capacity (int): Maximum number of tokens that the bucket
+            capacity: Maximum number of tokens that the bucket
                 can hold. Once the bucket if full, additional tokens
                 are discarded.
         """
 
     @abc.abstractmethod
-    def consume(self, key, num_tokens):
+    def consume(self, key: KeyType, num_tokens: int) -> bool:
         """Attempt to take one or more tokens from a bucket.
 
         Args:
-            key (str): Name of the bucket to replenish.
-            num_tokens (int): Number of tokens to try to consume from
+            key: Name of the bucket to replenish.
+            num_tokens: Number of tokens to try to consume from
                 the bucket. If the bucket contains fewer than the
                 requested number, no tokens are removed (i.e., it's all
                 or nothing).
 
         Returns:
-            bool: True if the requested number of tokens were removed
+            True if the requested number of tokens were removed
             from the bucket (conforming), otherwise False (non-
             conforming).
         """
