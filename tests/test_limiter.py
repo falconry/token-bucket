@@ -1,11 +1,11 @@
 import datetime
 import functools
-import uuid
 from typing import Type
+import uuid
 
-import pytest
 from freezegun import freeze_time
 from freezegun.api import FrozenDateTimeFactory
+import pytest
 
 import token_bucket
 

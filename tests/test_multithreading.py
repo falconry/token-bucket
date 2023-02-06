@@ -1,15 +1,15 @@
+from collections import Counter
 import datetime
 import os
 import random
 import threading
 import time
-import uuid
-from collections import Counter
 from typing import Any, Callable, List
+import uuid
 
-import pytest
 from freezegun import freeze_time
 from freezegun.api import FrozenDateTimeFactory
+import pytest
 
 import token_bucket
 

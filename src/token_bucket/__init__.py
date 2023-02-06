@@ -10,4 +10,4 @@ from .storage import MemoryStorage
 from .storage_base import StorageBase
 from .version import __version__
 
-__all__ = ["Limiter", "MemoryStorage", "StorageBase"]
+__all__ = ["Limiter", "MemoryStorage", "StorageBase", "__version__"]

@@ -14,7 +14,8 @@
 
 from typing import Union
 
-from .storage_base import KeyType, StorageBase
+from .storage_base import KeyType
+from .storage_base import StorageBase
 
 
 class Limiter:

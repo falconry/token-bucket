@@ -15,7 +15,8 @@
 import time
 from typing import Dict, List
 
-from .storage_base import KeyType, StorageBase
+from .storage_base import KeyType
+from .storage_base import StorageBase
 
 TOKEN_POS = 0
 REPLENISH_TIME_POS = 1
