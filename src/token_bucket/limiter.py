@@ -12,10 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from typing import Union
+
+from .storage_base import KeyType
 from .storage_base import StorageBase
 
 
-class Limiter(object):
+class Limiter:
     """Limits demand for a finite resource via keyed token buckets.
 
     A limiter manages a set of token buckets that have an identical
@@ -60,45 +63,36 @@ class Limiter(object):
     """
 
     __slots__ = (
-        '_rate',
-        '_capacity',
-        '_storage',
+        "_rate",
+        "_capacity",
+        "_storage",
     )
 
-    def __init__(self, rate, capacity, storage):
-        if not isinstance(rate, (float, int)):
-            raise TypeError('rate must be an int or float')
-
+    def __init__(self, rate: Union[float, int], capacity: int, storage: StorageBase):
         if rate <= 0:
-            raise ValueError('rate must be > 0')
-
-        if not isinstance(capacity, int):
-            raise TypeError('capacity must be an int')
+            raise ValueError("rate must be > 0")
 
         if capacity < 1:
-            raise ValueError('capacity must be >= 1')
-
-        if not isinstance(storage, StorageBase):
-            raise TypeError('storage must be a subclass of StorageBase')
+            raise ValueError("capacity must be >= 1")
 
         self._rate = rate
         self._capacity = capacity
         self._storage = storage
 
-    def consume(self, key, num_tokens=1):
+    def consume(self, key: KeyType, num_tokens: int = 1) -> bool:
         """Attempt to take one or more tokens from a bucket.
 
         If the specified token bucket does not yet exist, it will be
         created and initialized to full capacity before proceeding.
 
         Args:
-            key (bytes): A string or bytes object that specifies the
+            key: A string or bytes object that specifies the
                 token bucket to consume from. If a global limit is
                 desired for all consumers, the same key may be used
                 for every call to consume(). Otherwise, a key based on
                 consumer identity may be used to segregate limits.
         Keyword Args:
-            num_tokens (int): The number of tokens to attempt to
+            num_tokens: The number of tokens to attempt to
                 consume, defaulting to 1 if not specified. It may
                 be appropriate to ask for more than one token according
                 to the proportion of the resource that a given request
@@ -106,24 +100,15 @@ class Limiter(object):
                 resource.
 
         Returns:
-            bool: True if the requested number of tokens were removed
+            True if the requested number of tokens were removed
             from the bucket (conforming), otherwise False (non-
             conforming). The entire number of tokens requested must
             be available in the bucket to be conforming. Otherwise,
             no tokens will be removed (it's all or nothing).
         """
 
-        if not key:
-            if key is None:
-                raise TypeError('key may not be None')
-
-            raise ValueError('key must not be a non-empty string or bytestring')
-
-        if num_tokens is None:
-            raise TypeError('num_tokens may not be None')
-
         if num_tokens < 1:
-            raise ValueError('num_tokens must be >= 1')
+            raise ValueError("num_tokens must be >= 1")
 
         self._storage.replenish(key, self._rate, self._capacity)
         return self._storage.consume(key, num_tokens)

@@ -1,14 +1,32 @@
+from collections import Counter
+import datetime
+import os
 import random
 import threading
 import time
+from typing import Any, Callable, List
 import uuid
 
+from freezegun import freeze_time
+from freezegun.api import FrozenDateTimeFactory
 import pytest
 
 import token_bucket
 
 
-def _run_threaded(func, num_threads):
+def patched_freeze_time():
+    f = freeze_time()
+    f.ignore = tuple(set(f.ignore) - {"threading"})  # pyright: ignore
+    return f
+
+
+@pytest.fixture
+def frozen_time():
+    with patched_freeze_time() as ft:
+        yield ft
+
+
+def _run_threaded(func: Callable[..., Any], num_threads: int):
     threads = [threading.Thread(target=func) for __ in range(num_threads)]
 
     for t in threads:
@@ -20,21 +38,31 @@ def _run_threaded(func, num_threads):
 
 # NOTE(kgriffs): Don't try to remove more tokens than could ever
 #   be available according to the bucket capacity.
-@pytest.mark.parametrize('rate,capacity,max_tokens_to_consume', [
-    (10, 1, 1),
-    (100, 1, 1),
-    (100, 2, 2),
-    (10, 10, 1),
-    (10, 10, 2),
-    (100, 10, 1),
-    (100, 10, 10),
-    (100, 100, 5),
-    (100, 100, 10),
-    (1000, 10, 1),
-    (1000, 10, 5),
-    (1000, 10, 10),
-])
-def test_negative_count(rate, capacity, max_tokens_to_consume):
+# Test this only in the CI. It is incredibly slow and so
+#   unlikely that you may never see it.
+@pytest.mark.skipif(os.getenv("CI") != "true", reason="slow test")
+@pytest.mark.parametrize(
+    ("rate", "capacity", "max_tokens_to_consume"),
+    [
+        (10, 1, 1),
+        (100, 1, 1),
+        (100, 2, 2),
+        (10, 10, 1),
+        (10, 10, 2),
+        (100, 10, 1),
+        (100, 10, 10),
+        (100, 100, 5),
+        (100, 100, 10),
+        (1000, 10, 1),
+        (1000, 10, 5),
+        (1000, 10, 10),
+    ],
+)
+def test_negative_count(
+    rate: int,
+    capacity: int,
+    max_tokens_to_consume: int,
+):
     # NOTE(kgriffs): Usually there will be a much larger number of
     #   keys in a production system, but keep to just five to increase
     #   the likelihood of collisions.
@@ -43,7 +71,7 @@ def test_negative_count(rate, capacity, max_tokens_to_consume):
     storage = token_bucket.MemoryStorage()
     limiter = token_bucket.Limiter(rate, capacity, storage)
 
-    token_counts = []
+    token_counts: List[float] = []
 
     def loop():
         for __ in range(1000):
@@ -73,7 +101,7 @@ def test_negative_count(rate, capacity, max_tokens_to_consume):
         assert (max_tokens_to_consume * -2) < min(negative_counts)
 
 
-def test_replenishment():
+def test_burst_replenishment(frozen_time: FrozenDateTimeFactory):
     capacity = 100
     rate = 100
     num_threads = 4
@@ -81,29 +109,28 @@ def test_replenishment():
 
     storage = token_bucket.MemoryStorage()
 
-    def loop():
+    def consume():
         for i in range(trials):
-            key = str(i)
+            key = bytes(i)
+            storage.replenish(key, rate, capacity)
 
-            for __ in range(int(capacity / num_threads)):
-                storage.replenish(key, rate, capacity)
-                time.sleep(1.0 / rate)
-
-    _run_threaded(loop, num_threads)
+    for __ in range(capacity // num_threads):
+        _run_threaded(consume, num_threads)
+        frozen_time.tick(1.0 / rate)
 
     # NOTE(kgriffs): Ensure that a race condition did not result in
     #   not all the tokens being replenished
     for i in range(trials):
-        key = str(i)
+        key = bytes(i)
         assert storage.get_token_count(key) == capacity
 
 
-def test_conforming_ratio():
+def test_burst_conforming_ratio(frozen_time: FrozenDateTimeFactory):
     rate = 100
     capacity = 10
-    key = 'key'
+    key = b"key"
     target_ratio = 0.5
-    ratio_max = 0.62
+    max_ratio = 0.55
     num_threads = 4
 
     storage = token_bucket.MemoryStorage()
@@ -111,34 +138,26 @@ def test_conforming_ratio():
 
     # NOTE(kgriffs): Rather than using a lock to protect some counters,
     #   rely on the GIL and count things up after the fact.
-    conforming_states = []
+    conforming_states: Counter[bool] = Counter()
 
     # NOTE(kgriffs): Start with an empty bucket
     while limiter.consume(key):
         pass
 
-    def loop():
-        # NOTE(kgriffs): Run for 10 seconds
-        for __ in range(int(rate * 10 / target_ratio / num_threads)):
-            conforming_states.append(limiter.consume(key))
+    def consume():
+        conforming_states.update([limiter.consume(key)])
 
-            # NOTE(kgriffs): Only generate some of the tokens needed, so
-            #   that some requests will end up being non-conforming.
-            time.sleep(1.0 / rate * target_ratio * num_threads)
+    for __ in range(int(rate * 10 / target_ratio / num_threads)):
+        # NOTE(kgriffs): Only generate some of the tokens needed, so
+        #   that some requests will end up being non-conforming.
+        sleep_in_seconds = 1.0 / rate * target_ratio * num_threads
+        frozen_time.tick(delta=datetime.timedelta(seconds=sleep_in_seconds))
 
-    _run_threaded(loop, num_threads)
+        _run_threaded(consume, num_threads)
 
-    total_conforming = 0
-    for c in conforming_states:
-        if c:
-            total_conforming += 1
+    actual_ratio = conforming_states[True] / len(list(conforming_states.elements()))
 
-    actual_ratio = float(total_conforming) / len(conforming_states)
-
-    # NOTE(kgriffs): We don't expect to be super precise due to
-    #   the inprecision of time.sleep() and also having to take into
-    #   account execution time of the other instructions in the
-    #   loop. We do expect a few more conforming states vs. non-
-    #   conforming since the sleep time + overall execution time
-    #   makes the threads run a little behind the replenishment rate.
-    assert target_ratio < actual_ratio < ratio_max
+    # NOTE: With a frozen time we should hit exactly. However, due to a tiny gap between
+    #   replenish, frozen_time.tick and consume, it is possible that we have a little bit
+    #   more than expected. You may see this only with PyPy.
+    assert target_ratio <= actual_ratio < max_ratio

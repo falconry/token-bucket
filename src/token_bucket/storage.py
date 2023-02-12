@@ -13,8 +13,13 @@
 # limitations under the License.
 
 import time
+from typing import Dict, List
 
+from .storage_base import KeyType
 from .storage_base import StorageBase
+
+TOKEN_POS = 0
+REPLENISH_TIME_POS = 1
 
 
 class MemoryStorage(StorageBase):
@@ -30,29 +35,29 @@ class MemoryStorage(StorageBase):
     """
 
     def __init__(self):
-        self._buckets = {}
+        self._buckets: Dict[KeyType, List[float]] = {}
 
-    def get_token_count(self, key):
+    def get_token_count(self, key: KeyType) -> float:
         """Query the current token count for the given bucket.
 
         Note that the bucket is not replenished first, so the count
         will be what it was the last time replenish() was called.
 
         Args:
-            key (str): Name of the bucket to query.
+            key: Name of the bucket to query.
 
         Returns:
-            float: Number of tokens currently in the bucket (may be
+            Number of tokens currently in the bucket (may be
             fractional).
         """
         try:
-            return self._buckets[key][0]
+            return self._buckets[key][TOKEN_POS]
         except KeyError:
             pass
 
         return 0
 
-    def replenish(self, key, rate, capacity):
+    def replenish(self, key: KeyType, rate: float, capacity: int) -> None:
         """Add tokens to a bucket per the given rate.
 
         This method is exposed for use by the token_bucket.Limiter
@@ -109,23 +114,21 @@ class MemoryStorage(StorageBase):
                 # Limit to capacity
                 min(
                     capacity,
-
                     # NOTE(kgriffs): The new value is the current number
                     #   of tokens in the bucket plus the number of
                     #   tokens generated since last time. Fractional
                     #   tokens are permitted in order to improve
                     #   accuracy (now is a float, and rate may be also).
-                    tokens_in_bucket + (rate * (now - last_replenished_at))
+                    tokens_in_bucket + (rate * (now - last_replenished_at)),
                 ),
-
                 # Update the timestamp for use next time
-                now
+                now,
             ]
 
         except KeyError:
             self._buckets[key] = [capacity, time.monotonic()]
 
-    def consume(self, key, num_tokens):
+    def consume(self, key: KeyType, num_tokens: int) -> bool:
         """Attempt to take one or more tokens from a bucket.
 
         This method is exposed for use by the token_bucket.Limiter
@@ -134,7 +137,7 @@ class MemoryStorage(StorageBase):
 
         # NOTE(kgriffs): Assume that the key will be present, since
         #   replenish() will always be called before consume().
-        tokens_in_bucket = self._buckets[key][0]
+        tokens_in_bucket = self._buckets[key][TOKEN_POS]
         if tokens_in_bucket < num_tokens:
             return False
 
@@ -174,6 +177,5 @@ class MemoryStorage(StorageBase):
         #          much contention for the lock during such a short
         #          time window, but we might as well remove the
         #          possibility given the points above.
-
-        self._buckets[key][0] -= num_tokens
+        self._buckets[key][TOKEN_POS] -= num_tokens
         return True
