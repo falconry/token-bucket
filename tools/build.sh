@@ -33,7 +33,7 @@ _open_env() {
     pyenv shell $VENV_NAME
 
     pip install --upgrade pip
-    pip install --upgrade wheel twine
+    pip install --upgrade hatch
 }
 
 # Args: ()
@@ -77,9 +77,9 @@ pyenv uninstall -f $VENV_NAME
 #----------------------------------------------------------------------
 
 _echo_task "Building source distribution"
-_open_env 2.7.12
+_open_env 3.11.1
 
-python setup.py sdist -d $DIST_DIR
+hatch build -t sdist $DIST_DIR
 
 _close_env
 
@@ -88,8 +88,8 @@ _close_env
 #----------------------------------------------------------------------
 
 _echo_task "Building universal wheel"
-_open_env 2.7.12
+_open_env 3.11.1
 
-python setup.py bdist_wheel -d $DIST_DIR
+hatch build -t wheel $DIST_DIR
 
 _close_env
