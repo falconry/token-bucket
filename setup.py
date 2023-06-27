@@ -1,12 +1,19 @@
-import imp
+import importlib.machinery
+import importlib.util
 import io
 from os import path
 
 from setuptools import find_packages, setup
 
-VERSION = imp.load_source('version', path.join('.', 'token_bucket', 'version.py'))
-VERSION = VERSION.__version__
+loader = importlib.machinery.SourceFileLoader(
+    'version', path.join('.', 'token_bucket', 'version.py')
+)
+spec = importlib.util.spec_from_loader(loader.name, loader)
+module = importlib.util.module_from_spec(spec)
 
+loader.exec_module(module)
+
+VERSION = module.__version__
 
 setup(
     name='token_bucket',
