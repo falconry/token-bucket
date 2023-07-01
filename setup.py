@@ -1,12 +1,19 @@
-import imp
+import importlib.machinery
+import importlib.util
 import io
 from os import path
 
 from setuptools import find_packages, setup
 
-VERSION = imp.load_source('version', path.join('.', 'token_bucket', 'version.py'))
-VERSION = VERSION.__version__
+loader = importlib.machinery.SourceFileLoader(
+    'version', path.join('.', 'token_bucket', 'version.py')
+)
+spec = importlib.util.spec_from_loader(loader.name, loader)
+module = importlib.util.module_from_spec(spec)
 
+loader.exec_module(module)
+
+VERSION = module.__version__
 
 setup(
     name='token_bucket',
@@ -28,12 +35,13 @@ setup(
         'Programming Language :: Python',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
     ],
     keywords='web http https cloud rate limiting token bucket throttling',
     author='kgriffs',
@@ -41,7 +49,7 @@ setup(
     url='https://github.com/falconry/token-bucket',
     license='Apache 2.0',
     packages=find_packages(exclude=['tests']),
-    python_requires='>=3.5',
+    python_requires='>=3.6',
     install_requires=[],
     setup_requires=['pytest-runner'],
     tests_require=['pytest'],
