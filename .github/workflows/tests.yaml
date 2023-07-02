@@ -44,7 +44,9 @@ jobs:
             toxenv: py312
           - python-version: "pypy3.9"
             os: ubuntu-22.04
-            toxenv: pypy39
+            # NOTE(vytas): do not trace coverage under PyPy, it seems it is
+            #   extremely expensive on PyPy 3.9 under extensive threading.
+            toxenv: nocover
 
     # Steps to run in each job.
     # Some are GitHub actions, others run shell commands.
