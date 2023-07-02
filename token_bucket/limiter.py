@@ -117,7 +117,9 @@ class Limiter(object):
             if key is None:
                 raise TypeError('key may not be None')
 
-            raise ValueError('key must not be a non-empty string or bytestring')
+            raise ValueError(
+                'key must not be a non-empty string or bytestring'
+            )
 
         if num_tokens is None:
             raise TypeError('num_tokens may not be None')

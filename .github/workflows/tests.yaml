@@ -21,32 +21,32 @@ jobs:
         os:
           - "ubuntu-20.04"
         toxenv:
+          - "blue"
           - "pep8"
         include:
-          - python-version: "3.6"
-            os: ubuntu-20.04
-            toxenv: py36
           - python-version: "3.7"
-            os: ubuntu-20.04
+            os: ubuntu-22.04
             toxenv: py37
           - python-version: "3.8"
-            os: ubuntu-20.04
+            os: ubuntu-22.04
             toxenv: py38
           - python-version: "3.9"
-            os: ubuntu-20.04
+            os: ubuntu-22.04
             toxenv: py39
           - python-version: "3.10"
-            os: ubuntu-20.04
+            os: ubuntu-22.04
             toxenv: py310
           - python-version: "3.11"
-            os: ubuntu-20.04
+            os: ubuntu-22.04
             toxenv: py311
           - python-version: "3.12.0-alpha - 3.12"
-            os: ubuntu-20.04
+            os: ubuntu-22.04
             toxenv: py312
-          - python-version: pypy3
-            os: ubuntu-20.04
-            toxenv: pypy3
+          - python-version: "pypy3.9"
+            os: ubuntu-22.04
+            # NOTE(vytas): do not trace coverage under PyPy, it seems it is
+            #   extremely expensive on PyPy 3.9 under extensive threading.
+            toxenv: nocover
 
     # Steps to run in each job.
     # Some are GitHub actions, others run shell commands.
@@ -55,20 +55,12 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Set up Python 3.8 env
-        if: ${{ matrix.toxenv == 'py35' }}
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential python3.8 python3.8-dev python3.8-venv
-          python3.8 -m venv py38-env
-
       - name: Install dependencies
         run: |
-          if [ -f py38-env/bin/activate ]; then source py38-env/bin/activate; fi
           python -m pip install --upgrade pip
           pip install coverage tox
           python --version
@@ -78,7 +70,6 @@ jobs:
 
       - name: Run tests
         run: |
-          if [ -f py38-env/bin/activate ]; then source py38-env/bin/activate; fi
           tox -e ${{ matrix.toxenv }}
 
       - name: Upload coverage to Codecov

@@ -1,4 +1,4 @@
-|Build Status| |PyPi| |codecov.io|
+|Build Status| |PyPi| |codecov.io| |Blue|
 
 A Token Bucket Implementation for Python Web Apps
 =================================================
@@ -31,3 +31,7 @@ does allow for bursting, but only for a controlled duration.
 
 .. |codecov.io| image:: https://codecov.io/gh/falconry/token-bucket/branch/master/graph/badge.svg
    :target: https://codecov.io/gh/falconry/token-bucket
+
+.. |Blue| image:: https://img.shields.io/badge/code%20style-blue-blue.svg
+    :target: https://blue.readthedocs.io/
+    :alt: code style: blue

@@ -7,17 +7,20 @@ import pytest
 import token_bucket
 
 
-@pytest.mark.parametrize('rate,capacity', [
-    (0.3, 1),
-    (1, 1),
-    (2.5, 1),  # Fractional rates are valid
-    (10, 100),  # Long recovery time after bursting
-    (10, 10),
-    (10, 1),  # Disallow bursting
-    (100, 100),
-    (100, 10),
-    (100, 1),  # Disallow bursting
-])
+@pytest.mark.parametrize(
+    'rate,capacity',
+    [
+        (0.3, 1),
+        (1, 1),
+        (2.5, 1),  # Fractional rates are valid
+        (10, 100),  # Long recovery time after bursting
+        (10, 10),
+        (10, 1),  # Disallow bursting
+        (100, 100),
+        (100, 10),
+        (100, 1),  # Disallow bursting
+    ],
+)
 def test_general_functionality(rate, capacity):
     key = 'key'
     storage = token_bucket.MemoryStorage()
@@ -102,10 +105,10 @@ def test_different_keys():
 
     keys = [
         uuid.uuid4().bytes,
-        u'3084"5tj jafsb: f',
+        '3084"5tj jafsb: f',
         b'77752098',
-        u'whiz:bang',
-        b'x'
+        'whiz:bang',
+        b'x',
     ]
 
     # The last two should be non-conforming
@@ -127,43 +130,57 @@ def test_input_validation_storage_type():
         token_bucket.Limiter(1, 1, DoesNotInheritFromStorageBase())
 
 
-@pytest.mark.parametrize('rate,capacity,etype', [
-    (0, 0, ValueError),
-    (0, 1, ValueError),
-    (1, 0, ValueError),
-    (-1, -1, ValueError),
-    (-1, 0, ValueError),
-    (0, -1, ValueError),
-    (-2, -2, ValueError),
-    (-2, 0, ValueError),
-    (0, -2, ValueError),
-    ('x', 'y', TypeError),
-    ('x', -1, (ValueError, TypeError)),  # Params could be checked in any order
-    (-1, 'y', (ValueError, TypeError)),  # ^^^
-    ('x', 1, TypeError),
-    (1, 'y', TypeError),
-    ('x', None, TypeError),
-    (None, 'y', TypeError),
-    (None, None, TypeError),
-    (None, 1, TypeError),
-    (1, None, TypeError),
-])
+@pytest.mark.parametrize(
+    'rate,capacity,etype',
+    [
+        (0, 0, ValueError),
+        (0, 1, ValueError),
+        (1, 0, ValueError),
+        (-1, -1, ValueError),
+        (-1, 0, ValueError),
+        (0, -1, ValueError),
+        (-2, -2, ValueError),
+        (-2, 0, ValueError),
+        (0, -2, ValueError),
+        ('x', 'y', TypeError),
+        (
+            'x',
+            -1,
+            (ValueError, TypeError),
+        ),  # Params could be checked in any order
+        (-1, 'y', (ValueError, TypeError)),  # ^^^
+        ('x', 1, TypeError),
+        (1, 'y', TypeError),
+        ('x', None, TypeError),
+        (None, 'y', TypeError),
+        (None, None, TypeError),
+        (None, 1, TypeError),
+        (1, None, TypeError),
+    ],
+)
 def test_input_validation_rate_and_capacity(rate, capacity, etype):
     with pytest.raises(etype):
         token_bucket.Limiter(rate, capacity, token_bucket.MemoryStorage())
 
 
-@pytest.mark.parametrize('key,num_tokens,etype', [
-    ('', 1, ValueError),
-    ('', 0, ValueError),
-    ('x', 0, ValueError),
-    ('x', -1, ValueError),
-    ('x', -2, ValueError),
-    (-1, None, (ValueError, TypeError)),  # Params could be checked in any order
-    (None, -1, (ValueError, TypeError)),  # ^^^
-    (None, 1, TypeError),
-    (1, None, TypeError),
-])
+@pytest.mark.parametrize(
+    'key,num_tokens,etype',
+    [
+        ('', 1, ValueError),
+        ('', 0, ValueError),
+        ('x', 0, ValueError),
+        ('x', -1, ValueError),
+        ('x', -2, ValueError),
+        (
+            -1,
+            None,
+            (ValueError, TypeError),
+        ),  # Params could be checked in any order
+        (None, -1, (ValueError, TypeError)),  # ^^^
+        (None, 1, TypeError),
+        (1, None, TypeError),
+    ],
+)
 def test_input_validation_on_consume(key, num_tokens, etype):
     limiter = token_bucket.Limiter(1, 1, token_bucket.MemoryStorage())
     with pytest.raises(etype):
