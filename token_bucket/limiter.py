@@ -65,7 +65,7 @@ class Limiter(object):
         '_storage',
     )
 
-    def __init__(self, rate, capacity, storage):
+    def __init__(self, rate, capacity, storage, ignore_subclass: bool = False):
         if not isinstance(rate, (float, int)):
             raise TypeError('rate must be an int or float')
 
@@ -78,7 +78,7 @@ class Limiter(object):
         if capacity < 1:
             raise ValueError('capacity must be >= 1')
 
-        if not isinstance(storage, StorageBase):
+        if not isinstance(storage, StorageBase) and not ignore_subclass:
             raise TypeError('storage must be a subclass of StorageBase')
 
         self._rate = rate
