@@ -50,6 +50,4 @@ setup(
     packages=find_packages(exclude=['tests']),
     python_requires='>=3.7',
     install_requires=[],
-    setup_requires=['pytest-runner'],
-    tests_require=['pytest'],
 )
