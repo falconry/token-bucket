@@ -15,11 +15,9 @@
 import abc
 
 
-class StorageBase(object):
-    __metaclass__ = abc.ABCMeta
-
+class StorageBase(abc.ABC):
     @abc.abstractmethod
-    def get_token_count(self, key):
+    def get_token_count(self, key: str | bytes) -> float:
         """Query the current token count for the given bucket.
 
         Note that the bucket is not replenished first, so the count
@@ -34,7 +32,7 @@ class StorageBase(object):
         """
 
     @abc.abstractmethod
-    def replenish(self, key, rate, capacity):
+    def replenish(self, key: str | bytes, rate: float, capacity: int) -> None:
         """Add tokens to a bucket per the given rate.
 
         Conceptually, tokens are added to the bucket at a rate of one
@@ -54,7 +52,7 @@ class StorageBase(object):
         """
 
     @abc.abstractmethod
-    def consume(self, key, num_tokens):
+    def consume(self, key: str | bytes, num_tokens: int) -> bool:
         """Attempt to take one or more tokens from a bucket.
 
         Args:

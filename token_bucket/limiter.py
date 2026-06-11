@@ -65,7 +65,7 @@ class Limiter(object):
         '_storage',
     )
 
-    def __init__(self, rate, capacity, storage):
+    def __init__(self, rate: float, capacity: int, storage: StorageBase) -> None:
         if not isinstance(rate, (float, int)):
             raise TypeError('rate must be an int or float')
 
@@ -85,7 +85,7 @@ class Limiter(object):
         self._capacity = capacity
         self._storage = storage
 
-    def consume(self, key, num_tokens=1):
+    def consume(self, key: str | bytes, num_tokens: int = 1) -> bool:
         """Attempt to take one or more tokens from a bucket.
 
         If the specified token bucket does not yet exist, it will be
@@ -117,9 +117,7 @@ class Limiter(object):
             if key is None:
                 raise TypeError('key may not be None')
 
-            raise ValueError(
-                'key must not be a non-empty string or bytestring'
-            )
+            raise ValueError('key must not be a non-empty string or bytestring')
 
         if num_tokens is None:
             raise TypeError('num_tokens may not be None')
