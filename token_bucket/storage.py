@@ -109,17 +109,15 @@ class MemoryStorage(StorageBase):
                 # Limit to capacity
                 min(
                     capacity,
-
                     # NOTE(kgriffs): The new value is the current number
                     #   of tokens in the bucket plus the number of
                     #   tokens generated since last time. Fractional
                     #   tokens are permitted in order to improve
                     #   accuracy (now is a float, and rate may be also).
-                    tokens_in_bucket + (rate * (now - last_replenished_at))
+                    tokens_in_bucket + (rate * (now - last_replenished_at)),
                 ),
-
                 # Update the timestamp for use next time
-                now
+                now,
             ]
 
         except KeyError:
