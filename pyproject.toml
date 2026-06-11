@@ -50,6 +50,9 @@ Homepage = "https://github.com/falconry/token-bucket"
 [tool.setuptools.packages.find]
 include = ["token_bucket*"]
 
+[tool.setuptools.package-data]
+token_bucket = ["py.typed"]
+
 [tool.setuptools.dynamic]
 version = {attr = "token_bucket.version.__version__"}
 
