@@ -1,0 +1,65 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "token_bucket"
+description = "Very fast implementation of the token bucket algorithm."
+readme = "README.rst"
+license = "Apache-2.0"
+authors = [{name = "kgriffs", email = "mail@kgriffs.com"}]
+requires-python = ">=3.10"
+dependencies = []
+dynamic = ["version"]
+keywords = [
+    "web",
+    "http",
+    "https",
+    "cloud",
+    "rate",
+    "limiting",
+    "token",
+    "bucket",
+    "throttling",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Web Environment",
+    "Natural Language :: English",
+    "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+    "Operating System :: MacOS :: MacOS X",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX",
+    "Topic :: Internet :: WWW/HTTP",
+    "Topic :: Software Development :: Libraries",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
+]
+
+[project.urls]
+Homepage = "https://github.com/falconry/token-bucket"
+
+[tool.setuptools.packages.find]
+include = ["token_bucket*"]
+
+[tool.setuptools.dynamic]
+version = {attr = "token_bucket.version.__version__"}
+
+[tool.coverage.run]
+branch = true
+parallel = true
+source = ["token_bucket"]
+
+[tool.coverage.report]
+show_missing = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

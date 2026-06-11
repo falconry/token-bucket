@@ -1,4 +1,3 @@
 include tests/*
-include tools/*
-include requirements/test
+include requirements/tests
 include tox.ini
