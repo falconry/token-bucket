@@ -30,9 +30,8 @@ class MemoryStorage(StorageBase):
     """
 
     def __init__(self) -> None:
-        # NOTE(kgriffs): Each bucket is a list of two items:
-        #   the current token count and the timestamp of the
-        #   last replenishment.
+        # NOTE(vytas): Each bucket is a list of two items: the current
+        #   token count and the timestamp of the last replenishment.
         self._buckets: dict[str | bytes, list[float]] = {}
 
     def get_token_count(self, key: str | bytes) -> float:
