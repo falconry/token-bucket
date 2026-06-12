@@ -1,4 +1,4 @@
-|Build Status| |PyPi| |codecov.io| |Blue|
+|tests| |PyPI| |codecov|
 
 A Token Bucket Implementation for Python Web Apps
 =================================================
@@ -23,15 +23,12 @@ additional processing and memory overhead vs. the token bucket
 algorithm which uses a simple, fast counter per key. The latter approach
 does allow for bursting, but only for a controlled duration.
 
-.. |Build Status| image:: https://github.com/falconry/token-bucket/workflows/tests/badge.svg
-   :target: https://github.com/falconry/token-bucket/actions?query=workflow%3A%22tests%22
 
-.. |PyPi| image:: https://img.shields.io/pypi/v/token-bucket.svg
+.. |tests| image:: https://github.com/falconry/token-bucket/actions/workflows/tests.yaml/badge.svg
+   :target: https://github.com/falconry/token-bucket/actions/workflows/tests.yaml
+
+.. |PyPI| image:: https://img.shields.io/pypi/v/token-bucket.svg
    :target: https://pypi.python.org/pypi/token-bucket
 
-.. |codecov.io| image:: https://codecov.io/gh/falconry/token-bucket/branch/master/graph/badge.svg
+.. |codecov| image:: https://codecov.io/gh/falconry/token-bucket/branch/master/graph/badge.svg
    :target: https://codecov.io/gh/falconry/token-bucket
-
-.. |Blue| image:: https://img.shields.io/badge/code%20style-blue-blue.svg
-    :target: https://blue.readthedocs.io/
-    :alt: code style: blue
