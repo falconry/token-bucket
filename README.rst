@@ -1,4 +1,4 @@
-|tests| |PyPI| |codecov|
+|tests| |PyPI| |python-versions| |codecov|
 
 A Token Bucket Implementation for Python Web Apps
 =================================================
@@ -28,7 +28,10 @@ does allow for bursting, but only for a controlled duration.
    :target: https://github.com/falconry/token-bucket/actions/workflows/tests.yaml
 
 .. |PyPI| image:: https://img.shields.io/pypi/v/token-bucket.svg
-   :target: https://pypi.python.org/pypi/token-bucket
+   :target: https://pypi.org/project/token-bucket/
+
+.. |python-versions| image:: https://img.shields.io/pypi/pyversions/token-bucket.svg
+   :target: https://pypi.org/project/token-bucket/
 
 .. |codecov| image:: https://codecov.io/gh/falconry/token-bucket/branch/master/graph/badge.svg
    :target: https://codecov.io/gh/falconry/token-bucket
