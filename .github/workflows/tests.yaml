@@ -12,6 +12,8 @@ on:
 jobs:
   run_tox:
     name: tox -e ${{ matrix.toxenv }} (${{matrix.python-version}} on ${{ matrix.os }})
+    permissions:
+      contents: read
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -53,10 +55,12 @@ jobs:
     # Some are GitHub actions, others run shell commands.
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6.0.3
+        with:
+          persist-credentials: false
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6.2.0
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -74,8 +78,9 @@ jobs:
           tox -e ${{ matrix.toxenv }}
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v7.0.0
         if: ${{ matrix.toxenv == 'py312' }}
         with:
           env_vars: PYTHON
           fail_ci_if_error: true
+          token: ${{ secrets.CODECOV_TOKEN }}
